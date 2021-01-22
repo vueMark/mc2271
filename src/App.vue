@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <Mark/>
+    <Product :premium="premium"/>
   </div>
 </template>
 
 <script>
-import Mark from './components/Mark.vue'
+import Product from './components/Product.vue'
 
 export default {
   name: 'App',
   components: {
-    Mark
+    Product
+  },
+  data(){
+    return {
+      premium: false
+    }
   }
 }
 </script>

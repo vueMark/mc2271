@@ -8,22 +8,26 @@
       </div>
 
       <div class="product-info">
-        <h1>{{product}}</h1>
+        <h1>{{ title}}</h1>
         <p v-if="inStock">In Stock</p>
         <p v-else>Out of Stock</p>
+        <p>Shipping: {{shipping}}</p>
 
         <ul>
           <li v-for="(detail,counter) in details" :key="counter">{{ detail }}</li>
         </ul>
 
-        <div v-for="variant in variants"
+        <div v-for="(variant,index) in variants"
             :key="variant.variantId"
             class="color-box"
             :style="{backgroundColor: variant.variantColor}"
-            @mouseover="updateProduct(variant.variantImage)">
+            @mouseover="updateProduct(index)">
 
         </div>
-        <button @click="addtoCart">Add to Cart</button>
+        <button @click="addtoCart"
+        :disabled="!inStock"
+        :class="{disabledButton:!inStock}"
+        >Add to Cart</button>
 
         <div class="cart">
           <p>Cart({{cart}})</p>
@@ -40,23 +44,31 @@
 import green from '../assets/vmSocks-green-onWhite.jpg'
 import blue from '../assets/vmSocks-blue-onWhite.jpg'
 export default {
+  props:{
+    premium:{
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
   return {
+    brand: "Vue Mastery",
     product:"Socks",
     description:"prevents foot from smelling",
-    image: green,
-    inStock: true,
+    selectedVariant: 0,
     details: ["80% cotton", "20% polyester", "Gender-neutral"],
     variants: [
       {
         variantId: 2234,
         variantColor: "green",
-        variantImage: green
+        variantImage: green,
+        variantQuantity: 10
       },
       {
         variantId: 2235,
         variantColor: "blue",
-        variantImage: blue
+        variantImage: blue,
+        variantQuantity: 0
       }
     ],
     cart:0
@@ -66,8 +78,26 @@ methods:{
   addtoCart(){
     this.cart += 1
   },
-  updateProduct(variantImage){
-    this.image = variantImage
+  updateProduct(index){
+    this.selectedVariant = index
+    console.log(index)
+  }
+},
+computed:{
+  title(){
+    return this.brand + ' ' + this.product
+  },
+  image(){
+    return this.variants[this.selectedVariant].variantImage
+  },
+  inStock(){
+    return this.variants[this.selectedVariant].variantQuantity
+  },
+  shipping(){
+    if(this.premium){
+      return "Free"
+    }
+    return 2.99
   }
 }
 }
